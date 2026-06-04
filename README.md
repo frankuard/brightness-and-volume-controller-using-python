@@ -1,64 +1,20 @@
 # ✋ Hand Gesture Controller
 
-A real-time computer vision project that lets you control your **screen brightness** and **system volume** using hand gestures — no keyboard or mouse needed. Powered by **MediaPipe** and **OpenCV**.
+A real-time CV project that lets you control your **screen brightness** and **system volume** using hand gestures — no keyboard or mouse needed. Powered by **MediaPipe** and **OpenCV**.
 
 ---
 
 ## 🎯 Features
 
-- 💡 **Brightness Control** — Pinch your thumb and index finger to adjust screen brightness in real time
-- 🔊 **Volume Control** — Use the same gesture to control system audio volume
-- 🖐️ **Real-time Hand Tracking** — Detects and tracks up to 2 hands simultaneously using MediaPipe's Hand Landmarker
-- 📷 **Live Webcam Feed** — Displays annotated hand skeleton with landmark indices on screen
+- 💡 **Brightness Control** — Pinch gesture to adjust screen brightness
+- 🔊 **Volume Control** — Same gesture to control system audio
+- 🖐️ **Real-time Hand Tracking** — Detects up to 2 hands via MediaPipe
 
 ---
 
 ## 🧠 How It Works
 
-1. Webcam captures live video frames
-2. Frames are passed to MediaPipe's `HandLandmarker` (LIVE_STREAM mode)
-3. 21 hand landmarks are detected per hand
-4. The **Euclidean distance** between the **thumb tip (landmark 4)** and **index fingertip (landmark 8)** is calculated
-5. That distance is mapped (interpolated) to a 0–100 range
-6. The mapped value is sent to either `screen_brightness_control` or `pycaw` to adjust brightness/volume
-
----
-
-## 📁 Project Structure
-
-```
-hand-gesture-controller/
-│
-├── models/
-│   └── hand_landmarker.task       # MediaPipe Hand Landmarker model file
-│
-├── brightness_controller.py       # Brightness control using pinch gesture
-├── volume_controller.py           # Volume control using pinch gesture
-└── requirements.txt
-```
-
----
-
-## ⚙️ Feature Details
-
-| Feature | Details |
-|---|---|
-| Landmark used | Thumb tip (4) & Index fingertip (8) |
-| Min gesture distance | 30 px → 0% |
-| Max gesture distance | 160 px → 100% |
-| Interpolation | `numpy.interp` |
-| Hands supported | Up to 2 |
-| Webcam resolution | 640 × 480 |
-
----
-
-## 🔄 Data Flow
-
-```
-Webcam Frame → Flip (Mirror) → RGB Convert → MediaPipe HandLandmarker
-    → Landmark Detection → Distance Calculation → Interpolation
-        → Brightness / Volume Control → Display Overlay
-```
+The webcam feed is processed by MediaPipe's `HandLandmarker` in live stream mode. The **Euclidean distance** between the **thumb tip** and **index fingertip** is calculated and mapped to a 0–100 range, which is then applied to brightness or volume in real time.
 
 ---
 
@@ -125,10 +81,8 @@ comtypes
 ## 🔮 Future Improvements
 
 - Add more gestures (e.g., fist to mute, open palm to maximize brightness)
-- Support for Linux volume control (`alsaaudio` / `pactl`)
-- Add a HUD bar to visually display brightness/volume level
+- Support for Linux and other OS volume control 
 - Multi-gesture mode switcher (toggle between brightness and volume with a gesture)
-- Package as a background tray application
 
 ---
 
