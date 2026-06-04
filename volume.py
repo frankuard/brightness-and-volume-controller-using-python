@@ -7,6 +7,10 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python.vision import HandLandmarker,HandLandmarkerOptions 
 from mediapipe.tasks.python.vision.core.vision_task_running_mode import VisionTaskRunningMode as VisionTaskRunningMode
  
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+
  
 base_options = python.BaseOptions(model_asset_path="models/hand_landmarker.task")
 
@@ -23,6 +27,10 @@ print("HandLandMaker createdd successfully!!")
 cap = cv2.VideoCapture(0)
 cap.set(3,640)
 cap.set(4,480)
+
+devices = AudioUtilities.GetSpeakers()
+interface = devices._dev.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+volume_control = cast(interface, POINTER(IAudioEndpointVolume))
 
 while True:
     ret, frame = cap.read()
@@ -83,6 +91,10 @@ while True:
             volume = np.interp(distance,[min_distance,max_distance],[0,100])
             
             volume = np.clip(volume,0,100)
+            
+            
+            volume_control.SetMasterVolumeLevelScalar(volume / 100, None)
+            
             
             cv2.putText(frame, str(int(volume)),(50,80),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,255),2)
             
