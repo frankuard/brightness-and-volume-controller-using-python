@@ -6,6 +6,8 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python.vision import HandLandmarker, HandLandmarkerOptions
 from mediapipe.tasks.python.vision.core.vision_task_running_mode import VisionTaskRunningMode as VisionTaskRunningMode 
+import screen_brightness_control as sbc
+
 
 
 ## ADDING REQUIRED MODEL FOR THIS PROJECT
@@ -27,6 +29,7 @@ print("HandLandMaker created successfully")
 cap = cv2.VideoCapture(0)
 cap.set(3,640)
 cap.set(4,480)
+
 
 while True:
     ret, frame = cap.read()
@@ -81,11 +84,14 @@ while True:
             
             distance = math.hypot(index_x - thumb_x, index_y - thumb_y)
             
-            min_distance = 20
-            max_distance = 200
+            min_distance = 30
+            max_distance = 160
             
-            brightness = int(np.interp(distance, [min_distance,max_distance],[0,100]))
+            brightness = np.interp(distance, [min_distance,max_distance],[0,100])
             
+            brightness = np.clip(brightness,0,100)
+            
+            sbc.set_brightness(int(brightness))
             
             cv2.putText(frame, str(int(brightness)),(50,80),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,255),2)
                     
